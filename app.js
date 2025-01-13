@@ -11,7 +11,13 @@ const app = express();
 
 // Configuración
 app.use(express.json());
-app.use(cors());
+app.use(
+  cors({
+    origin: [""],
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+  })
+);
 
 // Rutas
 app.use(clientRouter);
