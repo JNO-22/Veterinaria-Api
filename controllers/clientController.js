@@ -14,8 +14,11 @@ export const getClient = async (req, res) => {
 };
 
 export const getAllClients = async (req, res) => {
+  const { hasMascotas } = req.query;
   try {
-    const clients = await Cliente.find();
+    const clients = await Cliente.find(
+      hasMascotas ? { mascotas: { $exists: true } } : {}
+    );
     res.status(200).json(clients);
   } catch (error) {
     console.error(error);

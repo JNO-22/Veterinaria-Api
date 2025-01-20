@@ -2,8 +2,9 @@ import Mascota from "../models/mascota.js";
 import Cliente from "../models/cliente.js";
 
 export const getAllMascotas = async (req, res) => {
+  const { especie } = req.query;
   try {
-    const mascotas = await Mascota.find();
+    const mascotas = await Mascota.find({ especie });
     res.status(200).json(mascotas);
   } catch (error) {
     console.error(error);
@@ -27,6 +28,8 @@ export const createMascota = async (req, res) => {
       edad,
       cliente: clienteId,
     });
+    cliente.mascotas.push(mascota);
+    await cliente.save();
     await mascota.save();
 
     res.status(201).json(mascota);
