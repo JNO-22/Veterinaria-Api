@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import clientRouter from "./routes/clientRoutes.js";
 import mascotaRouter from "./routes/mascotRoutes.js";
+import turnoRouter from "./routes/turnoRoutes.js";
 import "./config/db.js";
 dotenv.config();
 
@@ -22,8 +23,9 @@ app.use(
 // Rutas
 app.use("/cliente", clientRouter);
 app.use("/mascota", mascotaRouter);
+app.use("/turno", turnoRouter);
 
-// Rutas
+// Ruta raiz
 app.get("/", (req, res) => {
   res.send("¡Bienvenido a Fauna Veterinaria API!");
 });

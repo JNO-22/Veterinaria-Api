@@ -12,6 +12,11 @@ const MascotaSchema = new mongoose.Schema({
   },
 });
 
+MascotaSchema.query.byEspecie = function (especie) {
+  if (!especie) return this;
+  return this.where({ especie: new RegExp(`^${especie}$`, "i") });
+};
+
 const Mascota = mongoose.model("Mascota", MascotaSchema);
 
 export default Mascota;

@@ -1,4 +1,5 @@
 import Cliente from "../models/cliente.js";
+import Mascota from "../models/mascota.js";
 
 export const getClient = async (req, res) => {
   try {
@@ -15,7 +16,7 @@ export const getClient = async (req, res) => {
 
 export const getAllClients = async (req, res) => {
   try {
-    const clients = await Cliente.find();
+    const clients = await Cliente.find().select("-__v");
     res.status(200).json(clients);
   } catch (error) {
     console.error(error);
@@ -59,7 +60,10 @@ export const deleteClient = async (req, res) => {
     if (!client) {
       return res.status(404).send({ error: "Cliente no encontrado" });
     }
-    res.status(200).send({ message: "Cliente eliminado" });
+    await Mascota.deleteMany({ cliente: client._id }); // Eliminar todas las mascotas asociadas al cliente
+    res
+      .status(200)
+      .send({ message: "Cliente y mascotas eliminados de la base de datos" });
   } catch (error) {
     console.error(error);
     res.status(500).send({ error: "Error al eliminar el cliente" });
