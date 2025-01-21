@@ -1,9 +1,13 @@
 import Turno from "../models/turno.js";
 
 export const getAllTurnos = async (req, res) => {
-  const { fecha } = req.query;
+  const { day } = req.query;
   try {
-    const turnos = await Turno.find(fecha ? { fecha } : {});
+    const turnos = await Turno.find().dayTurns(day).populate({
+      // Utilizar el método dayTurns para filtrar turnos por día
+      path: "mascota", // Populate con la relación "mascota"
+      select: "-__v -_id -raza",
+    });
     res.status(200).json(turnos);
   } catch (error) {
     console.error(error);
@@ -19,6 +23,10 @@ export const createTurno = async (req, res) => {
     res.status(201).json(turno);
   } catch (error) {
     console.error(error);
+    if (error.code === 11000) {
+      // Código de error de duplicado en MongoDB
+      return res.status(409).send({ error: "Turno ya existente" });
+    }
     res.status(500).send({ error: "Error al crear el turno" });
   }
 };
@@ -38,7 +46,7 @@ export const deleteTurno = async (req, res) => {
 
 export const updateTurno = async (req, res) => {
   const { id } = req.params;
-  const { fecha, hora, mascotaId } = req.body;
+  const { fecha, hora } = req.body;
 
   try {
     const turno = await Turno.findById(id);
@@ -49,7 +57,6 @@ export const updateTurno = async (req, res) => {
 
     turno.fecha = fecha;
     turno.hora = hora;
-    turno.mascota = mascotaId;
 
     await turno.save();
 
