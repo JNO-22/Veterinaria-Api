@@ -12,13 +12,7 @@ const app = express();
 
 // Configuración
 app.use(express.json());
-app.use(
-  cors({
-    origin: ["http://localhost:5173"],
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true,
-  })
-);
+app.use(cors());
 
 // Rutas
 app.use("/cliente", clientRouter);
@@ -26,7 +20,7 @@ app.use("/mascota", mascotaRouter);
 app.use("/turno", turnoRouter);
 
 // Ruta raiz
-app.get("/", (req, res) => {
+app.get("/api", (req, res) => {
   res.send("¡Bienvenido a Fauna Veterinaria API!");
 });
 
