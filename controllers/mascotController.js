@@ -1,6 +1,21 @@
 import Mascota from "../models/mascota.js";
 import Cliente from "../models/cliente.js";
+import Turno from "../models/turno.js";
 
+export const getMascota = async (req, res) => {
+  try {
+    const mascota = await Mascota.findById(req.params.id)
+      .select("-__v")
+      .populate({ path: "cliente", select: "_id nombre " });
+    if (!mascota) {
+      return res.status(404).send({ error: "Mascota no encontrada" });
+    }
+    res.status(200).json({ data: mascota });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ error: "Error al obtener la mascota" });
+  }
+};
 export const getAllMascotas = async (req, res) => {
   const { especie } = req.query;
   try {
@@ -10,9 +25,15 @@ export const getAllMascotas = async (req, res) => {
       .populate({
         // Populate con la relación "cliente"
         path: "cliente",
-        select: "-__v -_id -email",
+        select: "_id nombre mascotas",
       });
-    res.status(200).json(mascotas);
+
+    if (!mascotas) {
+      console.log("Mascotas no encontradas");
+      return res.status(404).send({ error: "Mascotas no encontradas" });
+    }
+
+    res.status(200).json({ data: mascotas });
   } catch (error) {
     console.error(error);
     res.status(500).send({ error: "Error al obtener las mascotas" });
@@ -37,7 +58,7 @@ export const createMascota = async (req, res) => {
     });
     await mascota.save();
 
-    res.status(201).json(mascota);
+    res.status(201).json({ data: mascota });
   } catch (error) {
     res.status(500).send({ error: "Error al crear la mascota" });
   }
@@ -50,6 +71,8 @@ export const deleteMascota = async (req, res) => {
     if (!mascota) {
       return res.status(404).send({ error: "Mascota no encontrada" });
     }
+
+    await Turno.deleteMany({ mascota: mascotaId });
 
     res.status(200).send({ message: "Mascota eliminada" });
   } catch (error) {
@@ -70,7 +93,7 @@ export const updateMascota = async (req, res) => {
     mascota.raza = raza;
     mascota.edad = edad;
     await mascota.save();
-    res.status(200).json(mascota);
+    res.status(200).json({ data: mascota });
   } catch (error) {
     res.status(500).send({ error: "Error al actualizar la mascota" });
   }
@@ -88,7 +111,7 @@ export const getClientMascotas = async (req, res) => {
     }
 
     const mascotas = await Mascota.find({ cliente: clienteId });
-    res.status(200).json(mascotas);
+    res.status(200).json({ data: mascotas });
   } catch (error) {
     res.status(500).send({ error: "Error al obtener las mascotas" });
   }

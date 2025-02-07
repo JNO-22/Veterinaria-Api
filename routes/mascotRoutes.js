@@ -5,12 +5,14 @@ import {
   getClientMascotas,
   deleteMascota,
   updateMascota,
+  getMascota,
 } from "../controllers/mascotController.js";
 
 const router = express.Router();
 
 // Rutas de mascotas
 router.get("/", getAllMascotas);
+router.get("/:id", getMascota);
 router.post("/", createMascota);
 router.put("/:id", updateMascota);
 router.delete("/:id", deleteMascota);
